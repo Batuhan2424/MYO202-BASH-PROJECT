@@ -21,7 +21,6 @@ if [ "$OS_TYPE" == "Darwin" ]; then
     ifconfig | grep -A 1 "ether" >> "$LOG_FILE"
 else
     echo "[İşletim Sistemi: Windows]" >> "$LOG_FILE"
-    # tr -d '\r' komutu ile Windows'un gizli satır sonu karakterlerini temizliyoruz
     wmic cpu get Name, NumberOfCores /value 2>/dev/null | tr -d '\r' | grep = >> "$LOG_FILE"
     wmic ComputerSystem get TotalPhysicalMemory /value 2>/dev/null | tr -d '\r' | grep = >> "$LOG_FILE"
     wmic baseboard get Product,Manufacturer /value 2>/dev/null | tr -d '\r' | grep = >> "$LOG_FILE"
@@ -37,26 +36,23 @@ echo ""
 read -sp "Lütfen şifreleme parolasını (MYO+202) giriniz: " PAROLA
 echo ""
 
-# Parola kontrolü (Eğer hoca test ederken yanlış yazarsa durdurmasın diye esnetilebilir ama ödev kuralı için ekliyoruz)
 if [ "$PAROLA" != "MYO+202" ]; then
     echo "[HATA] Girilen parola ödev kurallarına uymuyor (MYO+202 olmalı)!"
     exit 1
 fi
 
 echo "Dosya AES256 ile şifreleniyor..."
-# Windows Git Bash tty ortamlarında pipe (|) hatasını önlemek için pinentry ve --passphrase parametrelerini güncelledik
 gpg --batch --yes --pinentry-mode loopback --passphrase "$PAROLA" \
   --symmetric \
   --cipher-algo AES256 \
   --output report.log.gpg \
   "$LOG_FILE"
 
-# Dosyanın gerçekten oluşup oluşmadığını garantiye alıyoruz
 if [ -f "report.log.gpg" ]; then
     rm -f "$LOG_FILE"
-    echo "[OK] 'report.log.gpg' başarıyla oluşturuldu ve orijinal dosya silindi."
+    echo "[OK] 'report.log.gpg' başarıyla oluşturuldu."
 else
-    echo "[HATA] Şifreleme başarısız oldu! report.log.gpg oluşturulamadı."
+    echo "[HATA] Şifreleme başarısız oldu!"
     exit 1
 fi
 
@@ -90,23 +86,19 @@ echo "4. Yukarıdaki anahtarı yapıştırın ve kaydedin."
 echo "------------------------------------------------------------"
 read -p "GitHub'a anahtarı eklediyseniz devam etmek için [ENTER] tuşuna basın..."
 
-echo "Git deposu başlatılıyor ve dosyalar commit ediliyor..."
+echo "Git deposu başlatılıyor..."
 
-# Eğer zaten init edilmişse remote hatası vermemesi için kontrol ekledik
 if [ ! -d .git ]; then
     git init
     git remote add origin "$REPO_URL"
 else
-    # Eğer remote zaten varsa güncelle veya hata fırlatmasını engelle
     git remote set-url origin "$REPO_URL" 2>/dev/null || git remote add origin "$REPO_URL"
 fi
 
 git add main.sh report.log.gpg
-git commit -S -m "Ödev teslimi: Sistem raporu (şifrelenmiş) ve script dosyası"
+git commit -S -m "Ödev teslimi"
 git branch -M main
-
-# Güvenli SSH push işlemi için push komutunu güncelledik
 git push -u origin main
 
 echo ""
-echo "İşlem tamamlandı! GitHub commit geçmişinizde yeşil 'Verified' rozetini kontrol edebilirsiniz."
+echo "İşlem tamamlandı!"
