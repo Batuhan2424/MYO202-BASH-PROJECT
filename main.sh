@@ -2,9 +2,9 @@
 
 # batuhan DEMİREL
 # 2420171009
-# file:///C:/Users/batuhan/Downloads/Siber_G%C3%BCvenlikte_Linux_%C4%B0%C5%9Fletim_Sistemleri_Sertifika.pdf
-file:///C:/Users/batuhan/Downloads/Docker_Temelleri_Sertifika.pdf
-file:///C:/Users/batuhan/Downloads/3b113b45-6e27-465b-8272-9e53da03229e.pdf
+https://www.btkakademi.gov.tr/portal/certificate/validate?certificateId=WJ1SkPPXak
+https://www.btkakademi.gov.tr/portal/certificate/validate?certificateId=zXztnNNZo7
+https://credsverse.com/credentials/3b113b45-6e27-465b-8272-9e53da03229e
 
 LOG_FILE="report.log"
 echo "=== Script Başlatıldı: $(date -Iseconds) ===" > "$LOG_FILE"
